@@ -1,0 +1,492 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Bus Seats</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            color: #333;
+        }
+
+        .header {
+            background: #d84e55;
+            color: white;
+            padding: 18px 6%;
+        }
+
+        .header h2 {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 25px auto;
+            padding: 15px;
+        }
+
+        .bus-info,
+        .seat-card,
+        .summary {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+
+        .bus-info h2 {
+            margin-top: 0;
+        }
+
+        .route {
+            color: #666;
+            font-size: 15px;
+        }
+
+        .price {
+            color: #16834a;
+            font-weight: bold;
+        }
+
+        .seat-card h3 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .legend-box {
+            width: 17px;
+            height: 17px;
+            border-radius: 4px;
+            border: 1px solid #16834a;
+            background: white;
+        }
+
+        .legend-box.selected {
+            background: #16834a;
+        }
+
+        .legend-box.booked {
+            background: #aaa;
+            border-color: #aaa;
+        }
+
+        .bus {
+            max-width: 360px;
+            margin: 25px auto;
+            padding: 22px 18px;
+            border: 2px solid #d5d9df;
+            border-radius: 65px 65px 18px 18px;
+            background: #fafafa;
+        }
+
+        .driver-area {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            border-bottom: 2px dashed #ddd;
+            padding: 15px 5px 20px;
+            margin-bottom: 20px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        .steering {
+            font-size: 27px;
+            margin-left: 12px;
+        }
+
+        .seat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 54px) 28px repeat(2, 54px);
+            column-gap: 10px;
+            row-gap: 20px;
+            justify-content: center;
+        }
+
+        .aisle {
+            width: 28px;
+        }
+
+        .seat {
+            position: relative;
+            width: 54px;
+            height: 47px;
+            margin-top: 7px;
+            border: 2px solid #16834a;
+            border-radius: 9px 9px 7px 7px;
+            background: #fff;
+            color: #16834a;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: inset 0 -5px 0 #e5f2e9;
+            transition: transform 0.15s;
+        }
+
+        .seat::before {
+            content: "";
+            position: absolute;
+            left: 7px;
+            right: 7px;
+            top: -7px;
+            height: 9px;
+            border: 2px solid #16834a;
+            border-radius: 5px 5px 2px 2px;
+            background: #fff;
+        }
+
+        .seat span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .seat:not(:disabled):hover {
+            transform: translateY(-2px);
+        }
+
+        .seat.selected {
+            background: #16834a;
+            border-color: #16834a;
+            color: white;
+            box-shadow: inset 0 -5px 0 #10663a;
+        }
+
+        .seat.selected::before {
+            background: #16834a;
+            border-color: #16834a;
+        }
+
+        .seat.booked {
+            background: #aaa;
+            border-color: #999;
+            color: white;
+            box-shadow: inset 0 -5px 0 #999;
+            cursor: not-allowed;
+        }
+
+        .seat.booked::before {
+            background: #aaa;
+            border-color: #999;
+        }
+
+        .front-label {
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .summary h3 {
+            margin-top: 0;
+        }
+
+        .summary p {
+            line-height: 1.7;
+        }
+
+        .pay-button {
+            width: 100%;
+            padding: 15px;
+            background: #d84e55;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .pay-button:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        #message {
+            font-size: 14px;
+            color: #555;
+        }
+
+        @media (max-width: 430px) {
+            .container {
+                padding: 10px;
+            }
+
+            .bus {
+                padding: 18px 8px;
+            }
+
+            .seat-grid {
+                grid-template-columns: repeat(2, 45px) 20px repeat(2, 45px);
+                column-gap: 6px;
+                row-gap: 17px;
+            }
+
+            .seat {
+                width: 45px;
+                height: 43px;
+                font-size: 11px;
+            }
+
+            .aisle {
+                width: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <h2>Bus Booking</h2>
+</header>
+
+<main class="container">
+
+    <section class="bus-info">
+        <h2>{{ bus.bus_name }}</h2>
+
+        <p class="route">
+            {{ bus.from_city }} → {{ bus.to_city }}
+        </p>
+
+        <p>
+            Journey date: {{ bus.journey_date }}
+        </p>
+
+        <p>
+            Departure: {{ bus.departure_time }} |
+            Arrival: {{ bus.arrival_time }}
+        </p>
+
+        <p class="price">
+            Price per seat: ₹<span id="seat-price">{{ bus.price }}</span>
+        </p>
+    </section>
+
+    <section class="seat-card">
+        <h3>Select Your Seats</h3>
+
+        <div class="legend">
+            <div class="legend-item">
+                <span class="legend-box"></span>
+                Available
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-box selected"></span>
+                Selected
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-box booked"></span>
+                Booked
+            </div>
+        </div>
+
+        <p class="front-label">FRONT OF BUS</p>
+
+        <div class="bus">
+            <div class="driver-area">
+                Driver
+                <span class="steering">◉</span>
+            </div>
+
+            <div class="seat-grid">
+                {% for seat in seats %}
+                    {% with seat_number=seat.seat_number %}
+                        <button
+                            type="button"
+                            class="seat {% if seat.is_booked %}booked{% endif %}"
+                            data-seat="{{ seat.seat_number }}"
+                            data-id="{{ seat.id }}"
+                            aria-label="Seat {{ seat.seat_number }}"
+                            {% if seat.is_booked %}disabled{% endif %}
+                        >
+                            <span>{{ seat.seat_number }}</span>
+                        </button>
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="summary">
+        <h3>Booking Summary</h3>
+
+        <p>
+            Selected seats:
+            <strong id="selected-seats">None</strong>
+        </p>
+
+        <p>
+            Number of seats:
+            <strong id="seat-count">0</strong>
+        </p>
+
+        <p>
+            Total amount:
+            ₹<strong id="total">0.00</strong>
+        </p>
+
+        <button class="pay-button" id="continue" disabled>
+            Continue to Passenger Details
+        </button>
+
+        <p id="message" role="status" aria-live="polite"></p>
+    </section>
+
+</main>
+
+<script>
+    const seats = document.querySelectorAll(".seat:not(.booked)");
+    const price = Number(
+        document.getElementById("seat-price").textContent.trim()
+    );
+
+    const selectedSeats = new Map();
+
+    const selectedText = document.getElementById("selected-seats");
+    const seatCount = document.getElementById("seat-count");
+    const totalText = document.getElementById("total");
+    const continueButton = document.getElementById("continue");
+    const message = document.getElementById("message");
+
+    function updateSummary() {
+        const names = [...selectedSeats.values()].map(
+            item => item.number
+        );
+
+        selectedText.textContent = names.join(", ") || "None";
+        seatCount.textContent = selectedSeats.size;
+        totalText.textContent = (selectedSeats.size * price).toFixed(2);
+        continueButton.disabled = selectedSeats.size === 0;
+    }
+
+    function getCookie(name) {
+        const cookies = document.cookie.split(";");
+
+        for (const cookie of cookies) {
+            const item = cookie.trim();
+
+            if (item.startsWith(name + "=")) {
+                return decodeURIComponent(
+                    item.substring(name.length + 1)
+                );
+            }
+        }
+
+        return "";
+    }
+
+    seats.forEach(seat => {
+        seat.addEventListener("click", async () => {
+            const seatNumber = seat.dataset.seat;
+            const seatId = seat.dataset.id;
+
+            if (selectedSeats.has(seatId)) {
+                selectedSeats.delete(seatId);
+                seat.classList.remove("selected");
+                updateSummary();
+
+                message.textContent =
+                    "Seat removed from your selection. Its server-side hold may remain until it expires.";
+
+                return;
+            }
+
+            seat.disabled = true;
+            message.textContent = "Checking seat availability...";
+
+            try {
+                const lockUrl = "{% url 'lock_seat' 0 %}".replace("/0/lock/", `/${seatId}/lock/`);
+
+
+                const response = await fetch(lockUrl, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken"),
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "same-origin"
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    selectedSeats.set(seatId, {
+                        number: seatNumber
+                    });
+
+                    seat.classList.add("selected");
+
+                    message.textContent =
+                        "Seat temporarily held. Complete the booking before the hold expires.";
+                } else {
+                    seat.classList.add("booked");
+                    seat.disabled = true;
+
+                    message.textContent =
+                        data.message || "This seat is unavailable.";
+                }
+
+                updateSummary();
+
+            } catch (error) {
+                message.textContent =
+                    "Could not check seat availability. Please try again.";
+            } finally {
+                if (!seat.classList.contains("booked")) {
+                    seat.disabled = false;
+                }
+            }
+        });
+    });
+
+    
+continueButton.addEventListener("click", () => {
+    if (selectedSeats.size === 0) {
+        message.textContent = "Please select at least one seat.";
+        return;
+    }
+
+    const seatIds = Array.from(selectedSeats.keys()).join(",");
+
+    const nextPage = "{% url 'passenger_details' bus.id %}";
+
+    window.location.href =
+        nextPage + "?seat_ids=" + encodeURIComponent(seatIds);
+});
+
+   
+
+    updateSummary();
+</script>
+
+</body>
+</html>
+

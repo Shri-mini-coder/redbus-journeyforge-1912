@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Payment</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f5f7;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .payment-card {
+            max-width: 450px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #d84343;
+        }
+
+        .notice {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .details {
+            margin: 20px 0;
+            line-height: 1.9;
+        }
+
+        .total {
+            font-size: 22px;
+            font-weight: bold;
+            color: #198754;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #d84343;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #b83232;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 18px;
+            color: #333;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="payment-card">
+        <h2>Demo Payment</h2>
+
+        <p class="notice">
+            This is a demonstration payment page.
+            No real money will be charged.
+        </p>
+
+        <div class="details">
+            <p><strong>Passenger:</strong> {{ passenger_name }}</p>
+            <p><strong>Bus:</strong> {{ bus.bus_name }}</p>
+            <p><strong>Route:</strong> {{ bus.from_city }} to {{ bus.to_city }}</p>
+            <p><strong>Journey Date:</strong> {{ bus.journey_date }}</p>
+
+            <p><strong>Seats:</strong>
+                {% for seat in seats %}
+                    {{ seat.seat_number }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+
+            <p class="total">Total: ₹{{ total|floatformat:2 }}</p>
+        </div>
+
+        <form method="post" action="{% url 'dummy_payment' %}">
+            {% csrf_token %}
+            <button type="submit">Pay Now (Demo)</button>
+        </form>
+
+        <a class="back-link" href="{% url 'home' %}">Cancel and return home</a>
+    </div>
+</body>
+</html>

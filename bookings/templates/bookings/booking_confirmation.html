@@ -1,0 +1,27 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking Confirmed</title>
+    <style>
+        body { font-family: Arial; background: #f3f5f7; padding: 30px; text-align: center; }
+        .card { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 10px; }
+        h1 { color: #16804a; }
+        a { display: inline-block; margin-top: 20px; padding: 12px 20px; background: #d84e55; color: white; text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Booking Confirmed!</h1>
+    <p>Thank you, {{ passenger_name }}.</p>
+    <p><b>Bus:</b> {{ bus.bus_name }}</p>
+    <p><b>Route:</b> {{ bus.from_city }} to {{ bus.to_city }}</p>
+    <p><b>Seats:</b>
+        {% for seat in seats %}{{ seat.seat_number }}{% if not forloop.last %}, {% endif %}{% endfor %}
+    </p>
+    <h2>Total Paid: ₹{{ total|floatformat:2 }}</h2>
+    <p>Demo transaction completed. No real payment was processed.</p>
+    <a href="/">Back to Home</a>
+</div>
+</body>
+</html>

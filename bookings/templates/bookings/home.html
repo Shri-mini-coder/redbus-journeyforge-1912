@@ -1,0 +1,216 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>redBus - Book Bus Tickets</title>
+
+    <!-- Bus image for the browser tab -->
+    <link rel="icon" type="image/png"
+          href="{% static 'bookings/bus-icon.png' %}?v=4">
+
+    
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            color: #263238;
+        }
+
+        nav {
+            background: white;
+            padding: 18px 6%;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .logo-red {
+            color: #d92736;
+        }
+
+        .logo-dark {
+            color: #172b4d;
+        }
+
+        .hero {
+            min-height: 430px;
+            padding: 70px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #fce4e6, #ffffff);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+            padding: 35px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #d92736;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #d5d9e0;
+            border-radius: 7px;
+            font-size: 15px;
+            background: white;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid #f3a0a7;
+            border-color: #d92736;
+        }
+
+        button {
+            grid-column: 1 / -1;
+            padding: 15px;
+            border: none;
+            border-radius: 7px;
+            background: #d92736;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #b51e2b;
+        }
+
+        .features {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            padding: 35px 15px;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            font-size: 15px;
+            color: #46546a;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 22px;
+            }
+
+            form {
+                grid-template-columns: 1fr;
+            }
+
+            .logo {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation bar: text logo only -->
+    <nav>
+        <a href="{% url 'home' %}" class="logo">
+            <span class="logo-red">red</span><span class="logo-dark">Bus</span>
+        </a>
+    </nav>
+
+    <!-- Main search section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Book Your Bus Tickets</h2>
+
+            <form action="{% url 'search_buses' %}" method="get">
+
+                <input
+                    type="text"
+                    name="from_city"
+                    placeholder="From City"
+                    required
+                >
+
+                <input
+                    type="text"
+                    name="to_city"
+                    placeholder="To City"
+                    required
+                >
+
+                <input
+                    type="date"
+                    name="journey_date"
+                    required
+                >
+
+                <select name="bus_type">
+                    <option value="">All Bus Types</option>
+                    <option value="Seater">Seater</option>
+                    <option value="Sleeper">Sleeper</option>
+                </select>
+
+                <button type="submit">Search Buses</button>
+
+            </form>
+        </div>
+    </section>
+
+    <!-- Features section -->
+    <section class="features">
+        <div class="feature">
+            🛡️
+            <p><strong>Safe Travel</strong></p>
+        </div>
+
+        <div class="feature">
+            🏷️
+            <p><strong>Best Prices</strong></p>
+        </div>
+
+        <div class="feature">
+            🚌
+            <p><strong>Seater & Sleeper</strong></p>
+        </div>
+
+        <div class="feature">
+            🎧
+            <p><strong>Travel Support</strong></p>
+        </div>
+    </section>
+
+</body>
+</html>

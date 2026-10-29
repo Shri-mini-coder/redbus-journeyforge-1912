@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Search Results</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f5f7;
+            margin: 0;
+            color: #333;
+        }
+
+        .header {
+            background: #d84e55;
+            color: white;
+            padding: 18px 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 25px auto;
+            padding: 20px;
+        }
+
+        .route {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .bus-card {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 8px #ddd;
+        }
+
+        .bus-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .price {
+            color: #d84e55;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .select-button {
+            display: inline-block;
+            background: #d84e55;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+        .select-button:hover {
+            background: #b83c43;
+        }
+
+        .empty {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        .back {
+            color: #d84e55;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>redBus-style Booking</h2>
+</div>
+
+<div class="container">
+
+    <div class="route">
+        <h2>{{ from_city }} → {{ to_city }}</h2>
+        <p>Journey date: {{ journey_date }}</p>
+        <p>{{ buses|length }} bus(es) found</p>
+
+        <form method="get" action="{% url 'search_buses' %}">
+            <input type="hidden" name="from_city" value="{{ from_city }}">
+            <input type="hidden" name="to_city" value="{{ to_city }}">
+            <input type="hidden" name="journey_date" value="{{ journey_date }}">
+
+            <label for="sort">Sort by:</label>
+            <select name="sort" id="sort" onchange="this.form.submit()">
+                <option value="departure_time"
+                    {% if sort == 'departure_time' %}selected{% endif %}>
+                    Departure time
+                </option>
+                <option value="price"
+                    {% if sort == 'price' %}selected{% endif %}>
+                    Lowest price
+                </option>
+            </select>
+        </form>
+    </div>
+
+    {% for bus in buses %}
+
+        <div class="bus-card">
+
+            <div class="bus-details">
+
+                <div>
+                    <h2>{{ bus.bus_name }}</h2>
+                    <p>{{ bus.from_city }} → {{ bus.to_city }}</p>
+                    <p>{{ bus.journey_date }}</p>
+                </div>
+
+                <div>
+                    <h3>
+                        {{ bus.departure_time }} → {{ bus.arrival_time }}
+                    </h3>
+                    <p>Journey duration: {{ bus.duration }}</p>
+                    <p>{{ bus.available_seats }} seats available</p>
+                </div>
+
+                <div>
+                    <p class="price">₹{{ bus.price }}</p>
+
+                    <a href="{% url 'select_seats' bus.id %}"
+                       class="select-button">
+                        Select Seats
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <div class="empty">
+            <h3>No buses found</h3>
+            <p>Try another route or journey date.</p>
+            <a href="{% url 'home' %}" class="back">
+                Search again
+            </a>
+        </div>
+
+    {% endfor %}
+
+</div>
+
+</body>
+</html>

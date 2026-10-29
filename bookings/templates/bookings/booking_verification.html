@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f5f7;
+            padding: 30px;
+        }
+        .card {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 13px;
+            background: #d84e55;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>Verify Your Booking</h2>
+
+    <h3>Journey Details</h3>
+    <p><b>Bus:</b> {{ bus.bus_name }}</p>
+    <p><b>From:</b> {{ bus.from_city }}</p>
+    <p><b>To:</b> {{ bus.to_city }}</p>
+    <p><b>Date:</b> {{ bus.journey_date }}</p>
+
+    <h3>Passenger Details</h3>
+    <p><b>Name:</b> {{ passenger_name }}</p>
+    <p><b>Email:</b> {{ passenger_email }}</p>
+    <p><b>Phone:</b> {{ passenger_phone }}</p>
+
+    <h3>Selected Seats</h3>
+    <p>
+        {% for seat in seats %}
+            {{ seat.seat_number }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+
+    <h2>Total: ₹{{ total|floatformat:2 }}</h2>
+
+    <p>Please verify all details before continuing.</p>
+
+    <form method="post" action="{% url 'dummy_payment' %}">
+        {% csrf_token %}
+        <button type="submit">Confirm Details & Continue to Demo Payment</button>
+    </form>
+
+    <p><small>This is a demonstration project. No real payment is processed.</small></p>
+</div>
+</body>
+</html>
